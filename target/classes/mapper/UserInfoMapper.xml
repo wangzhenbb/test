@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xa.pojo.UserInfo">
+    <!--<select id="findById" parameterType="int" resultType="com.xa.pojo.UserInfo">-->
+    <!--SELECT * FROM User WHERE id=#{id}-->
+    <!--</select>-->
+
+    <resultMap id="UserInfoMap" type="com.xa.pojo.UserInfo">
+        <id property="userId" column="userid"></id>
+        <result property="userName" column="username"></result>
+        <result property="password" column="password"></result>
+        <collection property="userRoleList" ofType="com.xa.pojo.UserRole">
+            <id property="roleId" column="roleid"></id>
+            <result property="roleName" column="rolename"></result>
+        </collection>
+    </resultMap>
+    <select id="infoUniteRole" resultMap="UserInfoMap">
+        select un.*,ur.rolename from USERINFO un,URUNITE uu,USERROLE ur where un.USERID = uu.USERID and ur.ROLEID = uu.ROLEID
+    </select>
+    <insert id="addUserInfo" parameterType="com.xa.pojo.UserInfo">
+        insert into userinfo values(seq_userid.nextval,#{userName},#{password})
+    </insert>
+    <update id="updateUserInfo" parameterType="com.xa.pojo.UserInfo">
+        update userinfo set username=#{userName},password=#{password} where userid=#{userId}
+    </update>
+    <delete id="delectUserInfo" parameterType="int">
+        delete from userinfo where userid=#{uid,jdbcType=INTEGER}
+    </delete>
+    <select id="selectUserInfoBy" parameterType="com.xa.pojo.UserInfo" resultType="com.xa.pojo.UserInfo">
+        SELECT * FROM userinfo
+        <where>
+        <if test="userId != 0">
+            and userid = #{userId}
+        </if>
+        <if test="userName != null">
+            and username = #{userName}
+        </if>
+        <if test="password != null">
+            and password = #{password}
+        </if>
+        </where>
+    </select>
+</mapper>
